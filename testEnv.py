@@ -1,26 +1,46 @@
 import gym
 import json
 import datetime as dt
-from stable_baselines.common.vec_env import DummyVecEnv
 import pandas as pd
 
+from stable_baselines.common.policies import MlpPolicy
+from stable_baselines.common.vec_env import DummyVecEnv
+from stable_baselines import PPO2
+
+import argparse
+from config import get_config
 from env.TradingEnv import TradingEnv
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--env_name', required=True, type=str,
+                    choices=['stock', 'FX', 'options','bitcoin'])
 
 
-df = pd.read_csv('./data/AAPL.csv')
-df = df.sort_values('Date')
 
-# The algorithms require a vectorized environment to run
-env = DummyVecEnv([lambda: TradingEnv(df,'stock')])
+if __name__ == '__main__':
+    args = parser.parse_args()
+    if args.env_name == 'stock':
+        df = pd.read_csv('./data/AAPL.csv')
+        df = df.sort_values('Date') 
+    elif args.env_name == 'bitcoin':
+        df = pd.read_csv('./data/coinbaseUSD.csv')
+        df = df.sort_values('Timestamp')
 
+    # The algorithms require a vectorized environment to run
+    env = DummyVecEnv([lambda: TradingEnv(df,args.env_name)])
 
-obs = env.reset()
-for _ in range(1000):
-    env.render() 
-    action = env.action_space.sample() # takes a random action
-    obs, rewards, done, info = env.step(action)
+    model = PPO2(MlpPolicy, env, verbose=1)
+    model.learn(total_timesteps=50)
+
+    obs = env.reset()
     
-    if done: obs = env.reset()
-env.close()
+    for _ in range(1000):
+        env.render(title="MSFT") 
+        action, _states = model.predict(obs)
+        obs, rewards, done, info = env.step(action)
+        
+        if done: obs = env.reset()
+
+
+    env.close()
     

@@ -1,19 +1,29 @@
 # RLTradingStrategy
 A trading agent with reinforcement learning in OpenAI's customised environment 
 
-## How to run
-`python testEnv.py --env_name <asset-to-be-traded>`
 
-## A screenshot of the trading process
-<img src='TradingScreenshot.png'>
+
+## Step 1:
+----------
+Create a trading environment from scratch using OpenAI with live rendering
+
+## Step 2:
+----------
+Create a trading agent using reinforcement learning  
+
+## Step 3:
+---------
+Improve the performance of the trading agent 
+
 
 ## Potential improvement:
 - multi-agent
 - add word embedding layer for news data 
-- use RNN, CNN 
+- 
 
 
 ## Citing
+---------
 [Create custom gym environments from scratch — A stock market example](https://towardsdatascience.com/creating-a-custom-openai-gym-environment-for-stock-trading-be532be3910e)[[repo](https://github.com/notadamking/Stock-Trading-Environment)]
 
 [Rendering elegant stock trading agents using Matplotlib and Gym](https://towardsdatascience.com/visualizing-stock-trading-agents-using-matplotlib-and-gym-584c992bc6d4)[[repo](https://github.com/notadamking/Stock-Trading-Visualization)]

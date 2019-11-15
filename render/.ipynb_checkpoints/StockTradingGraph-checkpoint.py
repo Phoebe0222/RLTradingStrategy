@@ -3,7 +3,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib import style
-from mpl_finance import candlestick_ochl as candlestick
 
 # config
 style.use('dark_background')
@@ -18,36 +17,38 @@ def date2num(date):
     converter = mdates.strpdate2num('%Y-%m-%d')
     return converter(date)
 
-
-class TradingGraph():
-    '''A trading visualization using matplotlib made to render OpenAI gym environments'''
+class StockTradingGraph:
+    
+  '''A stock trading visualization using matplotlib made to render OpenAI gym environments'''
     
     def __init__(self, df, title=None):
         self.df = df
-        self.net_worths = np.zeros(len(df))
+        self.net_worths = np.zeros(len(df['Date']))
 
         # Create a figure on screen and set the title
         fig = plt.figure()
         fig.suptitle(title)
 
         # Create top subplot for net worth axis
-        # first arg is size, second is location 
-        self.net_worth_ax = plt.subplot2grid((6, 1), (0, 0), rowspan=2, colspan=1)
+        self.net_worth_ax = plt.subplot2grid((6, 1), (0, 0), 
+                                             rowspan=2, colspan=1)
 
         # Create bottom subplot for shared price/volume axis
         self.price_ax = plt.subplot2grid((6, 1), (2, 0), 
-        rowspan=8, colspan=1, sharex=self.net_worth_ax)
+                                         rowspan=8, colspan=1, sharex=self.net_worth_ax)
 
         # Create a new axis for volume which shares its x-axis with price
         self.volume_ax = self.price_ax.twinx()
 
         # Add padding to make graph easier to view
-        plt.subplots_adjust(left=0.11, bottom=0.24, right=0.90, top=0.90, wspace=0.2, hspace=0)
+        plt.subplots_adjust(left=0.11, bottom=0.24, right=0.90, 
+                            top=0.90, wspace=0.2, hspace=0)
 
         # Show the graph without blocking the rest of the program
         plt.show(block=False) 
 
 
+    
     def _render_net_worth(self, current_step, net_worth, step_range, dates):
         # Clear the frame rendered last step
         self.net_worth_ax.clear()
@@ -64,19 +65,17 @@ class TradingGraph():
         last_net_worth = self.net_worths[current_step]
 
         # Annotate the current net worth on the net worth graph
-        self.net_worth_ax.annotate('{0:.2f}'.format(net_worth), 
-                                   (last_date, last_net_worth),
+        self.net_worth_ax.annotate('{0:.2f}'.format(net_worth), (last_date, last_net_worth),
                                    xytext=(last_date, last_net_worth),
                                    bbox=dict(boxstyle='round',
-                                   fc='w', ec='k', lw=1),
+                                             fc='w', ec='k', lw=1),
                                    color="black",
                                    fontsize="small")
 
         # Add space above and below min/max net worth
-        self.net_worth_ax.set_ylim(min(self.net_worths[np.nonzero(self.net_worths)]) / 1.25, 
-                                   max(self.net_worths) * 1.25)
+        self.net_worth_ax.set_ylim(
+            min(self.net_worths[np.nonzero(self.net_worths)]) / 1.25, max(self.net_worths) * 1.25)
         
-
 
     def _render_price(self, current_step, net_worth, dates, step_range):
         self.price_ax.clear()
@@ -95,11 +94,10 @@ class TradingGraph():
         last_high = self.df['High'].values[current_step]
 
         # Print the current price to the price axis
-        self.price_ax.annotate('{0:.2f}'.format(last_close), 
-                               (last_date, last_close),
+        self.price_ax.annotate('{0:.2f}'.format(last_close), (last_date, last_close),
                                xytext=(last_date, last_high),
                                bbox=dict(boxstyle='round',
-                               fc='w', ec='k', lw=1),
+                                         fc='w', ec='k', lw=1),
                                color="black",
                                fontsize="small")
 
@@ -107,7 +105,6 @@ class TradingGraph():
         ylim = self.price_ax.get_ylim()
         self.price_ax.set_ylim(ylim[0] - (ylim[1] - ylim[0])
                                * VOLUME_CHART_HEIGHT, ylim[1])
-
 
     def _render_volume(self, current_step, net_worth, dates, step_range):
         self.volume_ax.clear()
@@ -129,7 +126,6 @@ class TradingGraph():
         self.volume_ax.set_ylim(0, max(volume) / VOLUME_CHART_HEIGHT)
         self.volume_ax.yaxis.set_ticks([])
 
-
     def _render_trades(self, current_step, trades, step_range):
         for trade in trades:
             if trade['step'] in step_range:
@@ -147,24 +143,21 @@ class TradingGraph():
                 total = '{0:.2f}'.format(trade['total'])
 
                 # Print the current price to the price axis
-                self.price_ax.annotate(f'${total}', 
-                                       (date, high_low),
+                self.price_ax.annotate(f'${total}', (date, high_low),
                                        xytext=(date, high_low),
                                        color=color,
                                        fontsize=8,
                                        arrowprops=(dict(color=color)))
 
-
     def render(self, current_step, net_worth, trades, window_size=40):
-        '''take all the information from the current timestep and render a live representation'''
-
         self.net_worths[current_step] = net_worth
 
         window_start = max(current_step - window_size, 0)
         step_range = range(window_start, current_step + 1)
 
         # Format dates as timestamps, necessary for candlestick graph
-        dates = np.array([date2num(x) for x in self.df['Date'].values[step_range]])
+        dates = np.array([date2num(x)
+                          for x in self.df['Date'].values[step_range]])
 
         self._render_net_worth(current_step, net_worth, step_range, dates)
         self._render_price(current_step, net_worth, dates, step_range)
@@ -172,7 +165,8 @@ class TradingGraph():
         self._render_trades(current_step, trades, step_range)
 
         # Format the date ticks to be more easily read
-        self.price_ax.set_xticklabels(self.df['Date'].values[step_range], rotation=45, horizontalalignment='right')
+        self.price_ax.set_xticklabels(self.df['Date'].values[step_range], rotation=45,
+                                      horizontalalignment='right')
 
         # Hide duplicate net worth date labels
         plt.setp(self.net_worth_ax.get_xticklabels(), visible=False)
@@ -180,7 +174,5 @@ class TradingGraph():
         # Necessary to view frames before they are unrendered
         plt.pause(0.001)
 
-
     def close(self):
         plt.close()
-
