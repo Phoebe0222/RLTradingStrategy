@@ -11,7 +11,7 @@ For example,
 Stock example
 <img src='apple.png'>
 Bbitcoin example
-<img src='coinbbase.png'>
+<img src='coinbase.png'>
 
 ## Potential improvement:
 - multi-agent
