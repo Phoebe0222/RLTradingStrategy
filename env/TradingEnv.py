@@ -31,12 +31,13 @@ class TradingEnv(gym.Env):
         
         # actions include buy, sell, or hold x% 
         self.action_space = spaces.Box(low=np.array([0, 0]), 
-                                           high=np.array([3, 1]), 
-                                           dtype=np.float16)
+                                        high=np.array([3, 1]), 
+                                        dtype=np.float16)
         # observations include prices containing the open-high-low-close (OHLC) values for the last five days
         self.observation_space = spaces.Box(low=0, high=1, 
-                                                shape=(df.shape[1] - 1 + 5, self.config.lookback_range+1), 
-                                                dtype=np.float16)
+                                            shape=(df.shape[1] - 1 + 5, 
+                                            self.config.lookback_range+1), 
+                                            dtype=np.float16)
             
 
 
@@ -252,7 +253,7 @@ class TradingEnv(gym.Env):
                 self.viewer = TradingGraph(self.df, title)
                 
             if self.current_step > self.config.lookback_range:
-                self.viewer.render(self.current_step, self.net_worth, 
+                self.viewer.render(self.current_step + self.frame_start, self.net_worth, 
                                           self.trades, window_size=self.config.lookback_range)
                 
     def close(self):

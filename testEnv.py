@@ -21,21 +21,23 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.env_name == 'stock':
         df = pd.read_csv('./data/AAPL.csv')
-        df = df.sort_values('Date') 
+        df = df.sort_values('Date')
+        graph_title = 'Apple Stock'
     elif args.env_name == 'bitcoin':
         df = pd.read_csv('./data/coinbaseUSD.csv')
         df = df.sort_values('Timestamp')
+        graph_title = 'coinbase'
 
     # The algorithms require a vectorized environment to run
     env = DummyVecEnv([lambda: TradingEnv(df,args.env_name)])
 
-    model = PPO2(MlpPolicy, env, verbose=1)
+    model = PPO2(MlpPolicy, env, verbose=1,tensorboard_log="./tensorboard/")
     model.learn(total_timesteps=50)
 
     obs = env.reset()
     
     for _ in range(1000):
-        env.render(title="MSFT") 
+        env.render(title=graph_title) 
         action, _states = model.predict(obs)
         obs, rewards, done, info = env.step(action)
         

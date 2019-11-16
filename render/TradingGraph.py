@@ -3,6 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib import style
+from datetime import datetime
 from mpl_finance import candlestick_ochl as candlestick
 
 # config
@@ -15,13 +16,24 @@ DOWN_TEXT_COLOR = '#DC2C27'
 
 
 def date2num(date):
-    converter = mdates.strpdate2num('%Y-%m-%d')
-    return converter(date)
+    try:
+        converter = mdates.strpdate2num('%Y-%m-%d')
+        return converter(date)
+    except:
+        # 'date' is already a number
+        return date
 
-
+def num2date(num):
+    try:
+        date_label = datetime.utcfromtimestamp(num).strftime('%Y-%m-%d %H:%M')
+        return date_label
+    except:
+        # 'num' is already date 
+        return num
+    
+    
 class TradingGraph():
     '''A trading visualization using matplotlib made to render OpenAI gym environments'''
-    
     def __init__(self, df, title=None):
         self.df = df
         self.net_worths = np.zeros(len(df))
@@ -60,7 +72,8 @@ class TradingGraph():
         legend = self.net_worth_ax.legend(loc=2, ncol=2, prop={'size': 8})
         legend.get_frame().set_alpha(0.4)
 
-        last_date = date2num(self.df['Date'].values[current_step])
+        last_date = date2num(self.df[self.df.columns[1]].values[current_step])
+        #last_date = date2num(self.df['Date'].values[current_step])
         last_net_worth = self.net_worths[current_step]
 
         # Annotate the current net worth on the net worth graph
@@ -89,8 +102,8 @@ class TradingGraph():
         # Plot price using candlestick graph from mpl_finance
         candlestick(self.price_ax, candlesticks, width=1,
                     colorup=UP_COLOR, colordown=DOWN_COLOR)
-
-        last_date = date2num(self.df['Date'].values[current_step])
+        
+        last_date = date2num(self.df[self.df.columns[1]].values[current_step])
         last_close = self.df['Close'].values[current_step]
         last_high = self.df['High'].values[current_step]
 
@@ -111,8 +124,11 @@ class TradingGraph():
 
     def _render_volume(self, current_step, net_worth, dates, step_range):
         self.volume_ax.clear()
+        
+        
+        volume = np.array(self.df[self.df.columns[self.df.columns.str.contains('Volume')][0]].values[step_range])
 
-        volume = np.array(self.df['Volume'].values[step_range])
+        #np.array(self.df['Volume'].values[step_range])
 
         pos = self.df['Open'].values[step_range] - \
             self.df['Close'].values[step_range] < 0
@@ -133,7 +149,7 @@ class TradingGraph():
     def _render_trades(self, current_step, trades, step_range):
         for trade in trades:
             if trade['step'] in step_range:
-                date = date2num(self.df['Date'].values[trade['step']])
+                date = date2num(self.df[self.df.columns[1]].values[trade['step']])
                 high = self.df['High'].values[trade['step']]
                 low = self.df['Low'].values[trade['step']]
 
@@ -164,7 +180,8 @@ class TradingGraph():
         step_range = range(window_start, current_step + 1)
 
         # Format dates as timestamps, necessary for candlestick graph
-        dates = np.array([date2num(x) for x in self.df['Date'].values[step_range]])
+        dates = np.array([date2num(x) for x in self.df[self.df.columns[1]].values[step_range]])
+    
 
         self._render_net_worth(current_step, net_worth, step_range, dates)
         self._render_price(current_step, net_worth, dates, step_range)
@@ -172,7 +189,8 @@ class TradingGraph():
         self._render_trades(current_step, trades, step_range)
 
         # Format the date ticks to be more easily read
-        self.price_ax.set_xticklabels(self.df['Date'].values[step_range], rotation=45, horizontalalignment='right')
+        date_labels = np.array([num2date(x) for x in self.df[self.df.columns[1]].values[step_range]])
+        self.price_ax.set_xticklabels(date_labels, rotation=45, horizontalalignment='right')
 
         # Hide duplicate net worth date labels
         plt.setp(self.net_worth_ax.get_xticklabels(), visible=False)

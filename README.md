@@ -3,9 +3,15 @@ A trading agent with reinforcement learning in OpenAI's customised environment
 
 ## How to run
 `python testEnv.py --env_name <asset-to-be-traded>`
+For example,
+`python testEnv.py --env_name stock`
+
 
 ## A screenshot of the trading process
-<img src='TradingScreenshot.png'>
+Stock example
+<img src='apple.png'>
+Bbitcoin example
+<img src='coinbbase.png'>
 
 ## Potential improvement:
 - multi-agent
