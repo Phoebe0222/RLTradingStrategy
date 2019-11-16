@@ -13,7 +13,10 @@ Stock example
 Bbitcoin example
 <img src='coinbase.png'>
 
-## Potential improvement:
+## TODO:
+- visualise using tensorboard
+- split train/test dateset 
+- [better reward function](https://medium.com/@SOGorman35/now-that-i-had-a-chance-to-read-your-article-in-a-bit-more-depth-ill-add-some-more-input-beyond-b71e442bb8a)
 - multi-agent
 - add word embedding layer for news data 
 - use RNN, CNN 
