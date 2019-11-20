@@ -2,11 +2,11 @@ import gym
 from gym import spaces
 import numpy as np
 from sklearn import preprocessing
-from render.TradingGraph import TradingGraph
+from render.TradeGraph import TradeGraph
 from config import get_config
 
 
-class TradingEnv(gym.Env):
+class TradeEnv(gym.Env):
     '''Trading Environment that follows gym interface'''
     metadata = {'render.modes': ['live', 'file', 'none']}
     scaler = preprocessing.MinMaxScaler()
@@ -23,8 +23,9 @@ class TradingEnv(gym.Env):
             df:
             a pandas dataframe containing data 
         '''
-        super(TradingEnv, self).__init__()
+        super(TradeEnv, self).__init__()
         self.df = df.dropna().reset_index()
+
         self.assetType = assetType
         
         self.config = get_config(self.assetType) 
@@ -40,9 +41,6 @@ class TradingEnv(gym.Env):
                                             dtype=np.float16)
             
 
-
-    
-  
     def reset(self):
         
         '''
@@ -133,7 +131,7 @@ class TradingEnv(gym.Env):
             delay_modifier = (self.current_step / self.config.max_steps)
             reward = self.balance * delay_modifier
         elif self.assetType == 'bitcoin':
-            reward = self.net_worth
+            reward = self.net_worth - self.prev_net_worth
 
         # restart a trading session when the shole dataframe is traversed 
         if self.steps_left == 0:
@@ -218,6 +216,7 @@ class TradingEnv(gym.Env):
         
         
         # update portfolio net worth 
+        self.prev_net_worth = self.net_worth
         self.net_worth = self.balance + self.assets_held * self.current_price
         # update account hisotry 
         self.account_history = np.append(self.account_history,
@@ -250,7 +249,7 @@ class TradingEnv(gym.Env):
             self._render_to_file(kwargs.get('filename', 'render.txt'))
         elif mode == 'live':
             if self.viewer == None:
-                self.viewer = TradingGraph(self.df, title)
+                self.viewer = TradeGraph(self.df, title)
                 
             if self.current_step > self.config.lookback_range:
                 self.viewer.render(self.current_step + self.frame_start, self.net_worth, 

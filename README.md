@@ -13,6 +13,10 @@ Stock example
 Bbitcoin example
 <img src='coinbase.png'>
 
+## Tenserboard
+run `tensorboard --logdir==tensorboard --host=127.0.0.1`
+then go to [127.0.0.1:6006](127.0.0.1:6006)
+
 ## TODO:
 - visualise using tensorboard
 - split train/test dateset 

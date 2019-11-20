@@ -9,7 +9,7 @@ from stable_baselines import PPO2
 
 import argparse
 from config import get_config
-from env.TradingEnv import TradingEnv
+from envs.TradeEnv import TradeEnv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--env_name', required=True, type=str,
@@ -28,21 +28,31 @@ if __name__ == '__main__':
         df = df.sort_values('Timestamp')
         graph_title = 'coinbase'
 
+    # spliting train/test env
+    training_size = int(0.8*len(df))
+    train_df = df.iloc[0:training_size]
+    test_df = df.iloc[training_size+1:len(df)]
+    train_df = train_df.sort_values(by=[train_df.columns[0]])
+    test_df = test_df.sort_values(by=[test_df.columns[0]])
+
     # The algorithms require a vectorized environment to run
-    env = DummyVecEnv([lambda: TradingEnv(df,args.env_name)])
+    train_env = DummyVecEnv([lambda: TradeEnv(train_df,args.env_name)])
+    test_env = DummyVecEnv([lambda: TradeEnv(test_df,args.env_name)])
+    # Define a model, doc:  https://stable-baselines.readthedocs.io/en/master/guide/tensorboard.html#logging-more-values
+    model = PPO2(MlpPolicy, train_env, verbose=1,tensorboard_log="./tensorboard/")
+    model.learn(total_timesteps=10000)
+    model.save('./models/ppo2_{}'.format(args.env_name))
 
-    model = PPO2(MlpPolicy, env, verbose=1,tensorboard_log="./tensorboard/")
-    model.learn(total_timesteps=50)
-
-    obs = env.reset()
+    # init testing env
+    obs = test_env.reset()
     
+    # start agent 
     for _ in range(1000):
-        env.render(title=graph_title) 
+        train_env.render(title=graph_title) 
         action, _states = model.predict(obs)
-        obs, rewards, done, info = env.step(action)
+        obs, rewards, done, info = train_env.step(action)
         
-        if done: obs = env.reset()
+        if done: obs = test_env.reset()
 
-
-    env.close()
+    test_env.close()
     

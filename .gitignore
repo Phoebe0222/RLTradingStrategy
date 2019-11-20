@@ -3,3 +3,4 @@
 *.csv
 test.ipynb
 *.local
+__pycache__/
