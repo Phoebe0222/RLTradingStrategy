@@ -1,10 +1,24 @@
 # RLTradingStrategy
-A trading agent with reinforcement learning in OpenAI's customised environment 
+A trading agent of reinforcement learning in a customised trading environment, supports the following assets trading:
+- stocks 
+- bitcoin
+- options
+    - trading in options is superior to trading in stocks directly ([why](https://www.asx.com.au/documents/resources/UnderstandingOptions.pdf)), so the focus is options trading
+    - the options traded are index options, which add exposures to the market in one trade; later might include trading individual stock options  
+    - the trading strategies only involves taking the options, i.e. no writting options
+- FX
+
+Assumptions: 
+- all trades are in AUD
+- trading platform is ANZ for stocks, options and FX
+- trading platform for bitcoin is Coinbase
+- taxation is not considered 
 
 ## How to run
+
 `python testEnv.py --env_name <asset-to-be-traded>`
-For example,
-`python testEnv.py --env_name stock`
+
+For example, `python testEnv.py --env_name stock`
 
 
 ## A screenshot of the trading process
@@ -13,17 +27,22 @@ Stock example
 Bbitcoin example
 <img src='coinbase.png'>
 
-## Tenserboard
+## Using Tenserboard
 run `tensorboard --logdir==tensorboard --host=127.0.0.1`
-then go to [127.0.0.1:6006](127.0.0.1:6006)
+
+then go to [127.0.0.1:6006](127.0.0.1:6006) in your brower
 
 ## TODO:
-- visualise using tensorboard
-- split train/test dateset 
-- [better reward function](https://medium.com/@SOGorman35/now-that-i-had-a-chance-to-read-your-article-in-a-bit-more-depth-ill-add-some-more-input-beyond-b71e442bb8a)
-- multi-agent
-- add word embedding layer for news data 
-- use RNN, CNN 
+- [x] visualise using tensorboard
+- [x] split train/test dateset 
+- [ ] polish optons and FX env 
+- [ ] feature engineering
+- [ ] stream live data using Alpaca 
+- [ ] [better reward function](https://medium.com/@SOGorman35/now-that-i-had-a-chance-to-read-your-article-in-a-bit-more-depth-ill-add-some-more-input-beyond-b71e442bb8a)
+- [ ] multi-agent
+- [ ] add word embedding layer for news data 
+- [ ] explore different policies  
+- [ ] trade multiple assets simultaneously 
 
 
 ## Citing

@@ -18,7 +18,7 @@ class TradeEnv(gym.Env):
         input:
             assetType: 
             a string; type of assets that the agent trades with; 
-            choose between 'stock', 'FX', 'options', 'bitcoin'
+            choose between 'stock', 'FX', 'option', 'bitcoin'
             
             df:
             a pandas dataframe containing data 
@@ -35,8 +35,9 @@ class TradeEnv(gym.Env):
                                         high=np.array([3, 1]), 
                                         dtype=np.float16)
         # observations include prices containing the open-high-low-close (OHLC) values for the last five days
+        # and portfolio status (net worth, asset held, etc.) repeating for the number of days
         self.observation_space = spaces.Box(low=0, high=1, 
-                                            shape=(df.shape[1] - 1 + 5, 
+                                            shape=(df.shape[1] - 1 + self.config.num_portfolio_status, 
                                             self.config.lookback_range+1), 
                                             dtype=np.float16)
             
@@ -132,6 +133,12 @@ class TradeEnv(gym.Env):
             reward = self.balance * delay_modifier
         elif self.assetType == 'bitcoin':
             reward = self.net_worth - self.prev_net_worth
+        elif self.assetType == 'FX':
+            '''TODO'''
+            pass
+        elif self.assetType == 'option':
+            '''TODO'''
+            pass
 
         # restart a trading session when the shole dataframe is traversed 
         if self.steps_left == 0:

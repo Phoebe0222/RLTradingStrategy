@@ -13,20 +13,24 @@ from envs.TradeEnv import TradeEnv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--env_name', required=True, type=str,
-                    choices=['stock', 'FX', 'options','bitcoin'])
+                    choices=['stock', 'FX', 'option','bitcoin'])
 
 
 
 if __name__ == '__main__':
     args = parser.parse_args()
     if args.env_name == 'stock':
-        df = pd.read_csv('./data/AAPL.csv')
-        df = df.sort_values('Date')
+        df = pd.read_csv('./data/stock/AAPL.csv')
         graph_title = 'Apple Stock'
     elif args.env_name == 'bitcoin':
-        df = pd.read_csv('./data/coinbaseUSD.csv')
-        df = df.sort_values('Timestamp')
+        df = pd.read_csv('./data/bitcoin/coinbaseUSD.csv')
         graph_title = 'coinbase'
+    elif args.env_name == 'FX':
+        '''TODO'''
+        pass
+    elif args.env_name == 'option':
+        '''TODO'''
+        pass
 
     # spliting train/test env
     training_size = int(0.8*len(df))
