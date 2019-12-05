@@ -24,7 +24,7 @@ For example, `python testEnv.py --env_name stock`
 ## A screenshot of the trading process
 Stock example
 <img src='apple.png'>
-Bbitcoin example
+Bitcoin example
 <img src='coinbase.png'>
 
 ## Using Tenserboard
