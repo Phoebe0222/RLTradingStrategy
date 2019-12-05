@@ -1,0 +1,8 @@
+intrinio-sdk
+gym
+stable_baselines
+pandas
+numpy
+sklearn
+datetime 
+argparse
