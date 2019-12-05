@@ -35,9 +35,10 @@ then go to [127.0.0.1:6006](127.0.0.1:6006) in your brower
 ## TODO:
 - [x] visualise using tensorboard
 - [x] split train/test dateset 
-- [ ] polish optons and FX env 
+- [ ] finalise optons and FX env 
+- [ ] stream live data using Alpaca/Yahoo finance 
+- [ ] enable GCP
 - [ ] feature engineering
-- [ ] stream live data using Alpaca 
 - [ ] [better reward function](https://medium.com/@SOGorman35/now-that-i-had-a-chance-to-read-your-article-in-a-bit-more-depth-ill-add-some-more-input-beyond-b71e442bb8a)
 - [ ] multi-agent
 - [ ] add word embedding layer for news data 
