@@ -3,7 +3,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib import style
-from datetime import datetime
+import datetime as dt
+import time
 from mpl_finance import candlestick_ochl as candlestick
 
 # config
@@ -17,19 +18,19 @@ DOWN_TEXT_COLOR = '#DC2C27'
 
 def date2num(date):
     try:
-        converter = mdates.strpdate2num('%Y-%m-%d')
-        return converter(date)
+        timestamp = time.mktime(dt.datetime.strptime(date, '%Y-%m-%d').timetuple())
+        return timestamp
     except:
         # 'date' is already a number
         return date
 
-def num2date(num):
+def num2date(timestamp):
     try:
-        date_label = datetime.utcfromtimestamp(num).strftime('%Y-%m-%d %H:%M')
-        return date_label
+        date = dt.datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M')
+        return date
     except:
         # 'num' is already date 
-        return num
+        return timestamp
     
     
 class TradeGraph():
