@@ -94,7 +94,8 @@ class TradeEnv(gym.Env):
     def _next_observation(self):
         
         '''
-        given the current timestep and action, get the OHLC data from the last 5 days, normalise it, and appends portfolio's status
+        given the current timestep and action, get the OHLC data from the last 5 days, 
+        normalise it, and appends portfolio's status
         
         '''
         start = self.current_step
@@ -118,7 +119,8 @@ class TradeEnv(gym.Env):
     
     def step(self, action):
         '''
-        given the action taken, update rewards, observations, and whether it's terminated, i.e. negative balance
+        given the action taken, update rewards, observations, and whether it's terminated, 
+        i.e. negative balance
         '''
         self._take_action(action)
         
@@ -140,7 +142,7 @@ class TradeEnv(gym.Env):
             '''TODO'''
             pass
 
-        # restart a trading session when the shole dataframe is traversed 
+        # restart a trading session when the whole dataframe is traversed 
         if self.steps_left == 0:
             self.balance += self.assets_held * self.current_price 
             self.assets_held = 0
